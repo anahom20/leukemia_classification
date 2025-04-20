@@ -1,0 +1,1 @@
+The BCCD (Blood Cell Count and Detection) dataset is a publicly available medical imaging dataset used for the detection and classification of blood cells. It comprises annotated microscopic images containing red blood cells (RBCs), white blood cells (WBCs), and platelets, with bounding box labels provided for each cell type. 
