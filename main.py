@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # 0 = all logs, 1 = filter INFO, 2 = filter WARNING, 3 = filter ERROR
 import glob
 from PIL import Image
 from keras.preprocessing import image
@@ -20,8 +22,7 @@ from keras import backend as K
 from zipfile import ZipFile as zf, BadZipFile
 import cv2
 
-from tqdm import tqdm
-
+# pip install git+https://github.com/openai/CLIP.git 
 
 import torch
 from torchvision import transforms
@@ -49,7 +50,7 @@ def normalize_lighting(image):
     ])
     bg_val = int(np.median(corners))
     target_bg = 230
-    print(bg_val)
+    #print(bg_val)
     if bg_val < target_bg - 10:
         delta = target_bg - bg_val
     else:
@@ -109,7 +110,7 @@ def fn_patching(image_path):
 
         area = cv2.contourArea(contour)
         if area < 400 or area > 100000:
-            print(area)
+            #print(area)
             continue
 
         perimeter = cv2.arcLength(contour, True)
@@ -118,7 +119,7 @@ def fn_patching(image_path):
 
         circularity = 4 * np.pi * (area / (perimeter ** 2))
         if circularity < 0.2:
-            print(circularity)
+            #print(circularity)
             continue
 
         x, y, w, h = cv2.boundingRect(contour)
@@ -162,13 +163,13 @@ def fn_patching(image_path):
         x, y, w, h = cv2.boundingRect(c)
         aspect_ratio = float(w) / h
         if aspect_ratio < 0.5 or aspect_ratio > 2.8:
-            print(aspect_ratio)
+            #print(aspect_ratio)
             continue
 
         hull = cv2.convexHull(c)
         hull_area = cv2.contourArea(hull)
         if hull_area == 0:
-            print("hull")
+            #print("hull")
             continue
 
         mask_roi = np.zeros(mask.shape, dtype=np.uint8)
@@ -395,15 +396,15 @@ def process_blood_smear(image_path, patch_path='purple_cells', model_eff_path='e
     df = pd.DataFrame(data)
     df.to_csv('Data.csv', index=False)
     result = predict_from_csv_and_return_results('Data.csv')
-    print(result)
+    print(f"Predicted class: {result}")
 
     return result
 
-
-def main():
-    # Example usage
-    image_path = "path_to_your_image.jpg"  # Replace with your image path
-
-    result = process_blood_smear(image_path)
-
-    print(f"Predicted class: {result}")
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) < 2:
+        print("Usage: python main.py <image_path>")
+    else:
+        image_path = sys.argv[1]
+        result = process_blood_smear(image_path)
+        print(f"Predicted class: {result}")

@@ -3,7 +3,7 @@ st.cache_data.clear()  # Clear cached data if any
 
 from PIL import Image
 import numpy as np
-from leukemia_pipeline import process_blood_smear  # Ensure this import works
+from main import process_blood_smear
 
 st.set_page_config(page_title="Leukemia Classifier", layout="centered")
 
