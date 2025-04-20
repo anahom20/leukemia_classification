@@ -271,6 +271,25 @@ def fn_patching(image_path):
     cv2.imwrite(output_path, annotated)
     return cell_num
 
+class VLMClassifier(nn.Module):
+    def __init__(self, image_feature_dim=512, tabular_dim=4, hidden_dim=128, num_classes=4):
+        super().__init__()
+        self.tabular_net = nn.Sequential(
+            nn.Linear(tabular_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim)
+        )
+        self.classifier = nn.Sequential(
+            nn.Linear(image_feature_dim + hidden_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, num_classes)
+        )
+
+    def forward(self, image_features, tabular_features):
+        tabular_out = self.tabular_net(tabular_features)
+        combined = torch.cat([image_features, tabular_out], dim=1)
+        return self.classifier(combined)
+
 def predict_from_csv_and_return_results(csv_path, device="cuda" if torch.cuda.is_available() else "cpu"):
     # Load label encoder and model
     label_encoder = joblib.load("label_encoder.pkl")
@@ -325,9 +344,7 @@ def preprocess_patch(path, target_size):
     arr = image.img_to_array(img) / 255.0
     return np.expand_dims(arr, axis=0)
 
-def process_blood_smear(image_path, patch_path='purple_cells',
-                               model_eff_path='efficientnetv2_leukemia.keras',
-                               model_inc_path='inceptionv3_leukemia.keras'):
+def process_blood_smear(image_path, patch_path='purple_cells', model_eff_path='efficientnetv2_leukemia.keras', model_inc_path='inceptionv3_leukemia.keras'):
     # Load both models
     model_eff = load_model(model_eff_path)
     model_inc = load_model(model_inc_path)
