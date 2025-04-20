@@ -2,13 +2,13 @@ Final Dataset found at: https://drive.google.com/file/d/1eYxxgGCjZO77G_avOLcWQ7B
 python version: 3.11.4 [Project uses Torch, which may not be supported by some of the newer versions]
 
 Datasets used in this project:
-
+Blood Smear: https://www.kaggle.com/datasets/mohammadamireshraghi/blood-cell-cancer-all-4class
+Cells: https://www.kaggle.com/datasets/andrewmvd/leukemia-classification
 
 # How to try
 
-If you don't want to modify local versions please use virtual env
+If you don't want to modify local versions please use virtual env. If not, skip.
 
-[OPTIONAL]
 ```
 python -m venv venv
 venv\Scripts\activate  # On Windows
@@ -27,10 +27,12 @@ streamlit run app.py
 
 # Testing / Retraining
 
-When running on google collab, download and copy this zip into your google drive to run cds_project_Patching.ipynb and CDS_SVM_+_VLM.ipynb. Additionally for CDS_SVM_+_VLM.ipynb also paste the .csv files into content of google collab. Alternatively you can modify the filepaths.
+When running on google collab, download and copy this zip into your google drive to run [cds_project_Patching.ipynb] and [CDS_SVM_+_VLM.ipynb]. Additionally for [CDS_SVM_+_VLM.ipynb] also paste the .csv files into content of google collab. Alternatively you can modify the filepaths.
 
 # Results
+
 ## Without Validation [best_vlm_model_no_validation.pth]
+
 ### Classification Report
 
 | Class                     | Precision | Recall | F1-score | Support |
@@ -45,6 +47,7 @@ When running on google collab, download and copy this zip into your google drive
 | **Weighted avg**         | 0.98      | 0.98   | 0.98     | 454     |
 
 ## With validation [best_vlm_model.pth]
+
 ### Classification Report 
 
 | Class                     | Precision | Recall | F1-score | Support |
@@ -97,10 +100,10 @@ When running on google collab, download and copy this zip into your google drive
 ## Training Process 
 Blood Spread Image > Cell Patching [Main:fn_patching]  > Individual Cells to processs + Count of total White Blood cells
 
-Individual Cell > [efficientnetv2_leukemia.keras] > Preict possibility of cancer
-Individual Cell > [inceptionv3_leukemia.keras] > Preict possibility of cancer 
+Individual Cell > [efficientnetv2_leukemia.keras] > Predict possibility of cancer
+Individual Cell > [inceptionv3_leukemia.keras] > Predict possibility of cancer
 
-Cells > Main [fn_patching] > Mean, Max, Standard Deviation
+Cells' average possibility prediction > Mean, Max, Standard Deviation
 
 X:{Count, Mean, Max, Standard Deviation, Blood Spread Image}, y:{Diagnosis} > VLM > Model
 
